@@ -84,8 +84,14 @@ tasks:
 
   test:tck:
     desc: The sandbox conformance suite, judged against the fake adapter
+    vars:
+      # Go's 10m default fits CI, which takes about 7 minutes, but not a
+      # local macOS run: one took 89 minutes alone, and one beside two
+      # other runs was still going at 90. Override with
+      # `task test:tck TIMEOUT=4h`.
+      TIMEOUT: '{{.TIMEOUT | default "3h"}}'
     cmds:
-      - go test ./tck/sandbox/...
+      - go test -timeout {{.TIMEOUT}} ./tck/sandbox/...
 
   test:e2e:
     desc: >-
